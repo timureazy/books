@@ -54,11 +54,12 @@ class Route
             Route::PageNotFound();
         }
 
-        function PageNotFound()
-        {
-            $host = 'http://'.$_SERVER['HTTP_HOST'].'/';
-            header('http/1.1 404 Not Found');
-            header('Location:'.$host.'404');
-        }
+    }
+
+    function PageNotFound()
+    {
+        $host = 'http://'.$_SERVER['HTTP_HOST'].'/';
+        header('http/1.1 404 Not Found');
+        header('Location:'.$host.'404');
     }
 }
