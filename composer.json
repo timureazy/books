@@ -1,0 +1,10 @@
+{
+    "name": "t.aysin/books.com",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Core\\": "application/core",
+            "Controllers\\": "application/controllers"
+        }
+    }
+}

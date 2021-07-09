@@ -9,7 +9,7 @@
     <title>Library</title>
 </head>
 <body>
-    <div class="container-fluid">
+    <div class="container col-md-10">
         <?php include 'application/views/'.$content_view; ?>
     </div>
 </body>
