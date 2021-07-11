@@ -1,3 +1,4 @@
+<div class="d-flex flex-column"></div>
 <div class="d-flex align-items-center justify-content-center">
 <table class="table">
     <thead class="table-dark">
@@ -11,12 +12,13 @@
     </tr>
     </thead>
     <tbody>
+    <?php foreach ($data['items'] as $key => $value){ ?>
     <tr>
-        <td><?php echo $data["book_name"] ?></td>
-        <td><?php echo $data["name"].' '.$data["surname"]. ' '.$data["patronymic"] ?></td>
-        <td><?php echo $data["pages"]?></td>
-        <td><?php echo $data["public_date"]?></td>
-        <td><?php echo $data["genre"]?></td>
+        <td><?php echo $value["book_name"] ?></td>
+        <td><?php echo $value["name"].' '.$value["surname"]. ' '.$value["patronymic"] ?></td>
+        <td><?php echo $value["pages"]?></td>
+        <td><?php echo $value["public_date"]?></td>
+        <td><?php echo $value["genre"]?></td>
         <td>
             <div class="d-flex justify-content-center">
             <div class="me-2">
@@ -32,7 +34,12 @@
             </div>
         </td>
     </tr>
+    <?php }?>
     </tbody>
 </table>
-
+</div>
+<div class='d-flex flex-row justify-content-center'>
+<?php
+echo $data['pagination'];
+?>
 </div>
