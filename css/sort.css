@@ -1,0 +1,13 @@
+th.sorted[data-order="1"]::after,
+th.sorted[data-order="-1"]::after {
+    left: 10px;
+    position: relative;
+}
+
+th.sorted[data-order="-1"]::after {
+    content: "▼"
+}
+
+th.sorted[data-order="1"]::after {
+    content: "▲"
+}

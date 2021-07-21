@@ -5,6 +5,7 @@ class Pager {
 
     public function drawPager($perPage, $totalItems)
     {
+        $totalItems = intval($totalItems);
         $pages = ceil($totalItems / $perPage);
         if(isset($_GET['page']) || intval($_GET['page'] == 0)){
             $page = 1;
@@ -16,7 +17,7 @@ class Pager {
 
         $pager =  "<nav aria-label='Page navigation'>";
         $pager .= "<ul class='pagination'>";
-        $pager .= "<li class='page-item'><a class='page-link' href='/main?page=1' aria-label='Previous'><span aria-hidden='true'>«</span> Начало</a></li>";
+        $pager .= "<li class='page-item'><a class='page-link' href='/main' aria-label='Previous'><span aria-hidden='true'>«</span> Начало</a></li>";
         for($i=2; $i<=$pages-1; $i++) {
             $pager .= "<li class='page-item'><a class='page-link' href='/main?page=". $i."'>" . $i ."</a></li>";
         }

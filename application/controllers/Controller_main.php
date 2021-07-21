@@ -9,7 +9,8 @@ class Controller_main extends Controller
 {
     private $content = 'Main_view.php';
     private $template = 'Template_view.php';
-    private $perPage = 5;
+    private $perPage = 10;
+
     public function __construct()
     {
             $this->model = new Model_main();
@@ -19,11 +20,12 @@ class Controller_main extends Controller
 
     public function action_index()
     {
-
-            $data['items'] = $this->model->get_data();
-            $totalItems = count($data);
-            $pagination = $this->pager->drawPager($this->perPage, $totalItems);
+            $currentPage = intval($_GET['page']);
+            $totalItems = $this->model->count_all();
+            if($currentPage > 1){$currentPage--;};
+            $data['items'] = $this->model->get_data($currentPage*$this->perPage, $this->perPage);
+            $pagination = $this->pager->drawPager($this->perPage, $totalItems['cnt']);
             $data['pagination'] = $pagination;
-            $this->view->generate($this->content, $this ->template, $data);
+            $this->view->render($this->content, $this ->template, $data);
     }
 }
