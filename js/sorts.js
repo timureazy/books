@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 /**
  * первый способ
- *
+ * если flag = false то сортировка DESC, true - ASC
  * let flag = false
 document.querySelector('#sort_date').onclick = sortOnDate;
 document.querySelector('#sort_name').onclick = sortOnName;
