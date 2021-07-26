@@ -1,4 +1,3 @@
-// если flag = false то сортировка DESC, true - ASC
 document.addEventListener('DOMContentLoaded', () => {
 
     const getSort = ({ target }) => {
