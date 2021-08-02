@@ -31,10 +31,10 @@ class Controller_changeAuthor extends Controller
             $data['oldName'] = Request::post('old_name');
         }
             $data['Errors'] = $this->checker->validateAuthor($data, false);
-            if (empty($data['Errors']['authorNameError']) == 0) {
+            if (!empty($data['Errors']['authorNameError'])) {
                 $data['authorName'] = '';
                 $this->view->render($this->content, $this->template, $data);
-            } elseif (empty($data['Errors']['authorNameError']) == 1) {
+            } elseif (empty($data['Errors']['authorNameError'])) {
                 $this->model->changeAuthor($data['authorName'], $data['oldName']);
                 $data['successMessage'] = 'Автор '.$data['oldName']. ' изменен на '.$data['authorName'];
                 $this->view->render($this->content, $this->template, $data);

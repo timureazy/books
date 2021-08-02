@@ -29,11 +29,11 @@ class Controller_addAuthor extends Controller
                 'authorNameError' => ''
             ];
             $data['Errors'] = $this->checker->validateAuthor($data, true);
-            if(empty($data['Errors']['authorNameError']) == 0){
+            if(!empty($data['Errors']['authorNameError'])){
                 $data['authorName'] = '';
                 $this->view->render($this->content, $this ->template, $data);
             }
-            elseif(empty($data['Errors']['authorNameError']) == 1){
+            elseif(empty($data['Errors']['authorNameError'])){
                 $this->model->addAuthor($data['authorName']);
                 $this->view->render($this->content, $this ->template, $data);
             }
@@ -54,11 +54,11 @@ class Controller_addAuthor extends Controller
             ];
             $data['authorId'] = $this->model->getAuthorId($data['authorName']);
             $data['Errors'] = $this->checker->validateAuthor($data, false, true);
-            if(empty($data['Errors']['authorNameError']) == 0){
+            if(!empty($data['Errors']['authorNameError'])){
                 $data['authorName'] = '';
                 $this->view->render($this->content, $this ->template, $data);
             }
-            elseif(empty($data['Errors']['authorNameError']) == 1){
+            elseif(empty($data['Errors']['authorNameError'])){
                 $this->model->addAuthorRel($data['authorId']['id'], $data['bookId']);
                 $data['action'] = 'addAnother';
                 $this->view->render($this->content, $this ->template, $data);

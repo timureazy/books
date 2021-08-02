@@ -31,7 +31,7 @@ class Controller_addBook extends Controller
          $data['isBookExists'] = $this->checker->isBookExists($data['bookName']);
          if(empty($data['isAuthorExists'])){
              $data['authorError'] = 'Такого автора нет в базе авторов' . '<br>' . 'Сначала внесите автора в базу';
-         } elseif (empty($data['isBookExists']) != 1){
+         } elseif (empty($data['isBookExists'])){
              $data['bookError'] = 'Книга с таким названием уже есть' . '<br>' . 'Книги в списке должны быть уникальными';
          } else {
              $this->model->addBook($data['bookName'], $data['public_date'], $data['genre'], $data['authorName']);
