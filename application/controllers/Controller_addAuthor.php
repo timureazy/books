@@ -1,6 +1,7 @@
 <?php
 namespace Controllers;
 use Core\Controller;
+use Core\Request;
 use Core\View;
 use Models\Model_addAuthor;
 use Utils\Checker;
@@ -22,10 +23,9 @@ class Controller_addAuthor extends Controller
     }
     public function action_add()
     {
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        if(Request::isPost()){
             $data = [
-                'authorName' => $_POST['name'],
+                'authorName' => Request::post('name'),
                 'authorNameError' => ''
             ];
             $data['Errors'] = $this->checker->validateAuthor($data, true);
@@ -42,19 +42,17 @@ class Controller_addAuthor extends Controller
     public function action_addAnother()
     {
         $data['action'] = 'addAnother';
-        $data['book_id'] = $_GET['book'];
+        $data['book_id'] = Request::get('book');
         $this->view->render($this->content, $this ->template, $data);
     }
     public function action_addRel()
     {
-        if($_SERVER['REQUEST_METHOD'] == 'POST'){
-            $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+        if(Request::isPost()){
             $data = [
-                'authorName' => $_POST['name'],
-                'bookId' => $_POST['book_id']
+                'authorName' => Request::post('name'),
+                'bookId' => Request::post('book_id')
             ];
             $data['authorId'] = $this->model->getAuthorId($data['authorName']);
-            echo $data['authorId'];
             $data['Errors'] = $this->checker->validateAuthor($data, false, true);
             if(empty($data['Errors']['authorNameError']) == 0){
                 $data['authorName'] = '';

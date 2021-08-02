@@ -1,6 +1,7 @@
 <?php
 namespace Controllers;
 use Core\Controller;
+use Core\Request;
 use Core\View;
 use Models\Model_addBook;
 use Utils\Checker;
@@ -22,21 +23,18 @@ class Controller_addBook extends Controller
      }
      public function action_add()
      {
-         if($_SERVER['REQUEST_METHOD'] == 'POST') {
-             $_POST = filter_input_array(INPUT_POST, FILTER_SANITIZE_STRING);
+         $data = [];
+         if(Request::isPost()) {
+             $data = Request::post();
          }
-         $bookName = $_POST['bookName'];
-         $authorName = $_POST['authorName'];
-         $genre = $_POST['genre'];
-         $public_date = $_POST['public_date'];
-         $data['isAuthorExists'] = $this->checker->isAuthorExists($authorName);
-         $data['isBookExists'] = $this->checker->isBookExists($bookName);
+         $data['isAuthorExists'] = $this->checker->isAuthorExists($data['authorName']);
+         $data['isBookExists'] = $this->checker->isBookExists($data['bookName']);
          if(empty($data['isAuthorExists'])){
              $data['authorError'] = 'Такого автора нет в базе авторов' . '<br>' . 'Сначала внесите автора в базу';
          } elseif (empty($data['isBookExists']) != 1){
              $data['bookError'] = 'Книга с таким названием уже есть' . '<br>' . 'Книги в списке должны быть уникальными';
          } else {
-             $this->model->addBook($bookName, $public_date, $genre, $authorName);
+             $this->model->addBook($data['bookName'], $data['public_date'], $data['genre'], $data['authorName']);
          }
          $this->view->render($this->content, $this ->template, $data);
      }

@@ -26,6 +26,10 @@ class Database {
 
     private function __clone() {}
     private function __construct() {}
+    public function __wakeup()
+    {
+        throw new \Exception("Cannot unserialize a singleton.");
+    }
 
 
 }

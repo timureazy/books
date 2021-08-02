@@ -1,18 +1,18 @@
 <?php
 namespace Utils;
-
+use Core\Request;
 class Pager {
 
     public function drawPager($perPage, $totalItems)
     {
         $totalItems = intval($totalItems);
         $pages = ceil($totalItems / $perPage);
-        if(isset($_GET['page']) || intval($_GET['page'] == 0)){
+        if(Request::get('page') || intval(Request::get('page') === 0)){
             $page = 1;
-        } elseif (intval($_GET['page'] > $totalItems)){
+        } elseif (intval(Request::get('page') > $totalItems)){
             $page = $pages;
         } else {
-            $page = $_GET['page'];
+            $page = Request::get('page');
         }
 
         $pager =  "<nav aria-label='Page navigation'>";

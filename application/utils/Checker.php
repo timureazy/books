@@ -35,7 +35,6 @@ class Checker extends \Core\Model
         $query = $connection->prepare($sql);
         $query -> bindValue('fid_author', $authorId);
         $query -> bindValue('fid_work', $bookId);
-        //$query -> execute();
         $res = $query->fetch(PDO::FETCH_ASSOC);
         return $res;
     }

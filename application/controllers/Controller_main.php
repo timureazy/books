@@ -2,8 +2,10 @@
 namespace Controllers;
 use Core\Controller;
 use Core\View;
+use Core\Request;
 use Models\Model_main;
 use Utils\Pager;
+
 
 class Controller_main extends Controller
 {
@@ -20,7 +22,7 @@ class Controller_main extends Controller
 
     public function action_index()
     {
-            $currentPage = intval($_GET['page']);
+            $currentPage = intval(Request::get('page'));
             $totalItems = $this->model->count_all();
             if($currentPage > 1){$currentPage--;};
             $data['items'] = $this->model->get_data($currentPage*$this->perPage, $this->perPage);
