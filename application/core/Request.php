@@ -13,7 +13,7 @@ class Request {
         }
     }
 
-    public function isGet ()
+    public static function isGet ()
     {
         if($_SERVER['REQUEST_METHOD'] === 'GET'){
             return true;
