@@ -1,14 +1,31 @@
 <?php
-namespace Models;
 
-use Core\Model;
+namespace Repositories;
+use Core\Database;
+use Models\Book;
 use PDO;
 
-class Model_changeBook extends Model
+class BookRepository
 {
+
+    public function addBook(Book $book)
+    {
+        $connection = Database::getConnect();
+        $sql = "BEGIN;
+                INSERT INTO work_info (book_name, genre, public_date) 
+                VALUES(:bookName, :genre, :public_date);
+                SET @last_book_id = (SELECT max(id) as last_id from work_info);
+                SET @author_id = (SELECT id FROM authors WHERE name = :authorName);
+                INSERT INTO rel_author_work(fid_author, fid_work)
+                VALUES(@author_id, @last_book_id);
+                COMMIT;";
+        $query = $connection->prepare($sql);
+        $query -> execute(array('bookName' => $book->getName(), 'public_date' => $book->getDate(), 'genre' => $book->getGenre(), 'authorName' => $book->getAuthor()));
+    }
+
     public function getBookById($id)
     {
-        $connection = $this->connect_to_db();
+        $connection = Database::getConnect();
         $sql = "SELECT     wi.id as id, group_concat(distinct a.name) as name, max(wi.public_date) as public_date, max(wi.genre) as genre, max(raw.id) as rel_id, book_name
                           FROM work_info wi
                           join rel_author_work raw on wi.id = raw.fid_work
@@ -24,7 +41,7 @@ class Model_changeBook extends Model
 
     public function deleteAuthor($authorId, int $id)
     {
-        $connection = $this->connect_to_db();
+        $connection = Database::getConnect();
         $sql = 'DELETE FROM rel_author_work WHERE fid_author = :authorId and fid_work = :id';
         $query = $connection->prepare($sql);
         $query->execute(array('authorId' => $authorId, 'id' => $id));
@@ -32,7 +49,7 @@ class Model_changeBook extends Model
 
     public function getAuthorId($name)
     {
-        $connection = $this->connect_to_db();
+        $connection = Database::getConnect();
         $sql = 'SELECT id FROM authors WHERE name = :name';
         $query = $connection->prepare($sql);
         $query->bindValue('name', $name);
@@ -43,33 +60,34 @@ class Model_changeBook extends Model
 
     public function updateAuthor($authorId, $relId)
     {
-        $connection = $this->connect_to_db();
+        $connection = Database::getConnect();
         $sql = 'UPDATE rel_author_work SET fid_author = :authorId WHERE id = :rel_id';
         $query = $connection->prepare($sql);
         $query->execute(array('authorId' => $authorId, 'rel_id' => $relId));
     }
 
-    public function updateBook($book_name, $id)
+    public function updateBook(Book $book)
     {
-        $connection = $this->connect_to_db();
+        $connection = Database::getConnect();
         $sql = 'UPDATE work_info SET book_name = :book_name WHERE id = :id';
         $query = $connection->prepare($sql);
-        $query->execute(array('book_name' => $book_name, 'id' => $id));
+        $query->execute(array('book_name' => $book->getName(), 'id' => $book->getId()));
     }
 
-    public function updateGenre($genre, $id)
+    public function updateGenre(Book $book)
     {
-        $connection = $this->connect_to_db();
+        $connection = Database::getConnect();
         $sql = 'UPDATE work_info SET genre = :genre WHERE id = :id';
         $query = $connection->prepare($sql);
-        $query->execute(array('genre' => $genre, 'id' => $id));
+        $query->execute(array('genre' => $book->getGenre(), 'id' => $book->getId()));
     }
 
-    public function updatePublicDate($public_date, $id)
+    public function updatePublicDate(Book $book)
     {
-        $connection = $this->connect_to_db();
+        $connection = Database::getConnect();
         $sql = 'UPDATE work_info SET public_date = :public_date WHERE id = :id';
         $query = $connection->prepare($sql);
-        $query->execute(array('public_date' => $public_date, 'id' => $id));
+        $query->execute(array('public_date' => $book->getDate(), 'id' => $book->getId()));
     }
+
 }

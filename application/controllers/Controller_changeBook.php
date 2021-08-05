@@ -3,7 +3,9 @@ namespace Controllers;
 use Core\Controller;
 use Core\Request;
 use Core\View;
+use Models\Book;
 use Models\Model_changeBook;
+use Repositories\BookRepository;
 use Utils\Checker;
 
 class Controller_changeBook extends Controller
@@ -14,7 +16,8 @@ class Controller_changeBook extends Controller
 
     public function __construct()
     {
-        $this->model = new Model_changeBook();
+        $this->book = new Book();
+        $this->bookRepository = new BookRepository();
         $this->view = new View();
         $this->checker = new Checker();
     }
@@ -22,18 +25,20 @@ class Controller_changeBook extends Controller
     public function action_index()
     {
         $id = intval(Request::get('book'));
-        $data = $this->model->getBookById($id);
+        $data = $this->bookRepository->getBookById($id);
         $this->view->render($this->content, $this->template, $data);
     }
 
     public function action_change()
     {
         $id = intval(Request::get('book'));
-        $old_data = $this->model->getBookById($id);
+        $old_data = $this->bookRepository->getBookById($id);
         $data = [];
         if(Request::isPost()) {
             $data = Request::post();
         }
+        $book = $this->book::create($data);
+        $book->setId($id);
             $authorNameValidation = "/[^а-яА-Я]+$/msiu";
             $bookNameValidation = "/[^а-яА-Я\s]+/msiu";
             $genreValidation = "/[^а-яА-Я\s]+/msiu";
@@ -66,22 +71,22 @@ class Controller_changeBook extends Controller
                 if ($data__[$i] !== '') {
                     $isAuthorExists = $this->checker->isAuthorExists($data__[$i]);
                     if ($isAuthorExists) {
-                        $authorId = $this->model->getAuthorId($data__[$i]);
+                        $authorId = $this->bookRepository->getAuthorId($data__[$i]);
                         $relId = $data['rel_id'];
-                        $this->model->updateAuthor($authorId, $relId);
+                        $this->bookRepository->updateAuthor($authorId, $relId);
                 }
                 }elseif($data__[$i] === '') {
                         $tmp_name = $data_[$i];
-                        $authorId = $this->model->getAuthorId($tmp_name);
-                        $this->model->deleteAuthor($authorId['id'], $id);
+                        $authorId = $this->bookRepository->getAuthorId($tmp_name);
+                        $this->bookRepository->deleteAuthor($authorId['id'], $id);
                     }
                 }
         $isBookExists = $this->checker->isBookExists($data['book_name']);
         if (empty($isBookExists)) {
-            $this->model->updateBook($data['bookName'], $id);
+            $this->bookRepository->updateBook($book);
         }
-        $this->model->updateGenre($data['genre'], $id);
-        $this->model->updatePublicDate($data['public_date'], $id);
+        $this->bookRepository->updateGenre($book);
+        $this->bookRepository->updatePublicDate($book);
         $this->view->render($this->successPage, $this->template);
     } catch (\Exception $e) {
             $data['Error'] = $e->getMessage();

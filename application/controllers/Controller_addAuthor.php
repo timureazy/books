@@ -3,7 +3,8 @@ namespace Controllers;
 use Core\Controller;
 use Core\Request;
 use Core\View;
-use Models\Model_addAuthor;
+use Models\Author;
+use Repositories\AuthorRepository;
 use Utils\Checker;
 
 class Controller_addAuthor extends Controller
@@ -13,7 +14,8 @@ class Controller_addAuthor extends Controller
 
     public function __construct()
     {
-        $this->model = new Model_addAuthor();
+        $this->author = new Author();
+        $this->repository = new AuthorRepository();
         $this->view = new View();
         $this->checker =new Checker();
     }
@@ -34,7 +36,8 @@ class Controller_addAuthor extends Controller
                 $this->view->render($this->content, $this ->template, $data);
             }
             elseif(empty($data['Errors']['authorNameError'])){
-                $this->model->addAuthor($data['authorName']);
+                $author = $this->author::create($data['authorName']);
+                $this->repository->save($author);
                 $this->view->render($this->content, $this ->template, $data);
             }
         }
@@ -52,14 +55,15 @@ class Controller_addAuthor extends Controller
                 'authorName' => Request::post('name'),
                 'bookId' => Request::post('book_id')
             ];
-            $data['authorId'] = $this->model->getAuthorId($data['authorName']);
+            $this->repository->getId($this->author);
+            $data['authorId'] = $this->author->getId();
             $data['Errors'] = $this->checker->validateAuthor($data, false, true);
             if(!empty($data['Errors']['authorNameError'])){
                 $data['authorName'] = '';
                 $this->view->render($this->content, $this ->template, $data);
             }
             elseif(empty($data['Errors']['authorNameError'])){
-                $this->model->addAuthorRel($data['authorId']['id'], $data['bookId']);
+                $this->repository->addRel($data['authorId']['id'], $data['bookId']);
                 $data['action'] = 'addAnother';
                 $this->view->render($this->content, $this ->template, $data);
             }

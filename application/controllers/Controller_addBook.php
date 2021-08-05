@@ -3,7 +3,8 @@ namespace Controllers;
 use Core\Controller;
 use Core\Request;
 use Core\View;
-use Models\Model_addBook;
+use Models\Book;
+use Repositories\BookRepository;
 use Utils\Checker;
 
 class Controller_addBook extends Controller
@@ -13,7 +14,8 @@ class Controller_addBook extends Controller
 
      public function __construct()
      {
-         $this->model = new Model_addBook();
+         $this->book= new Book();
+         $this->bookRepository = new BookRepository();
          $this->view = new View();
          $this->checker = new Checker();
      }
@@ -31,10 +33,11 @@ class Controller_addBook extends Controller
          $data['isBookExists'] = $this->checker->isBookExists($data['bookName']);
          if(empty($data['isAuthorExists'])){
              $data['authorError'] = 'Такого автора нет в базе авторов' . '<br>' . 'Сначала внесите автора в базу';
-         } elseif (empty($data['isBookExists'])){
+         } elseif (!empty($data['isBookExists'])){
              $data['bookError'] = 'Книга с таким названием уже есть' . '<br>' . 'Книги в списке должны быть уникальными';
          } else {
-             $this->model->addBook($data['bookName'], $data['public_date'], $data['genre'], $data['authorName']);
+             $book = $this->book::create($data);
+             $this->bookRepository->addBook($book);
          }
          $this->view->render($this->content, $this ->template, $data);
      }

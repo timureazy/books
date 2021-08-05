@@ -5,7 +5,9 @@
         "psr-4": {
             "Core\\": "application/core",
             "Controllers\\": "application/controllers",
-            "Utils\\": "application/utils"
+            "Models\\": "application/models",
+            "Utils\\": "application/utils",
+            "Repositories\\": "application/Repositories"
         }
     }
 }

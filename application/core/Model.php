@@ -9,3 +9,6 @@ use Core\Database;
             return Database::getConnect();
         }
     }
+
+
+    $ModelAuthor = new Model(); $ModelAuthor ->connect_to_db();
