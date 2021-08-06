@@ -1,13 +1,14 @@
 <?php
-namespace Models;
 
-    use Core\Model;
-    use PDO;
-    class Model_main extends Model {
+namespace Repositories;
+use Core\Database;
+use Models\MainPage;
+use PDO;
+    class MainRepository {
 
-            public function get_data($limitLeft, $limitRight)
+            public function getData(MainPage $mainPage): void
             {
-                $connection = $this->connect_to_db();
+                $connection = Database::getConnect();
                 $sql = "  SELECT group_concat(distinct a.name) as name, max(wi.public_date) as public_date, max(wi.genre) as genre, max(wi.id) as rel_id, book_name
                           FROM work_info wi
                           join rel_author_work raw on wi.id = raw.fid_work
@@ -15,23 +16,24 @@ namespace Models;
                           group by book_name
                           LIMIT :left, :right";
                 $query = $connection->prepare($sql);
-                $query->bindValue(":left", $limitLeft, PDO::PARAM_INT);
-                $query->bindValue(":right", $limitRight, PDO::PARAM_INT);
+                $query->bindValue(":left", $mainPage->currentPage*$mainPage->perPage, PDO::PARAM_INT);
+                $query->bindValue(":right", $mainPage->perPage, PDO::PARAM_INT);
                 $query->execute();
                 while($row = $query->fetch(PDO::FETCH_ASSOC)){
                     $res[$row['book_name']]=$row;
                 }
-                return $res;
+                $mainPage->setData($res);
             }
 
-            public function count_all()
+            public function countAll(MainPage $mainPage): MainPage
             {
-                $connection = $this->connect_to_db();
+                $connection = Database::getConnect();
                 $sql = "SELECT count(*) as cnt
                           FROM work_info";
                 $query = $connection->prepare($sql);
                 $query->execute();
                 $res = $query->fetch(PDO::FETCH_ASSOC);
-                return $res;
+                $mainPage->setCount($res);
+                return $mainPage;
             }
     }
