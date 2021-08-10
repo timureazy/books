@@ -22,15 +22,15 @@ class AuthorRepository
         }
     }
 
-    public function getId(Author $author): Author
+    public function getId(Author $author): void
     {
         $connection = Database::getConnect();
         $sql = 'SELECT id FROM authors WHERE name = :name';
         $query = $connection->prepare($sql);
-        $query->bindValue('name', $author>getName());
+        $query->bindValue('name', $author->getName());
         $query->execute();
         $res = $query->fetch(PDO::FETCH_ASSOC);
-        return $author->setId($res['id']);
+        $author->setId($res['id']);
     }
 
     public function addRel(Author $author, $bookId)

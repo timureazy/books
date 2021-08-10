@@ -3,6 +3,7 @@ namespace Controllers;
 use Core\Controller;
 use Core\Request;
 use Core\View;
+use Forms\FormAddAuthor;
 use Models\Author;
 use Repositories\AuthorRepository;
 use Utils\Checker;
@@ -11,62 +12,61 @@ class Controller_addAuthor extends Controller
 {
     private $content = 'AddAuthor_view.php';
     private $template = 'Template_view.php';
+    private $contentNewAuthor = 'AddNewAuthor_view.php';
 
     public function __construct()
     {
-        $this->author = new Author();
         $this->repository = new AuthorRepository();
         $this->view = new View();
         $this->checker =new Checker();
     }
+
     public function action_index()
     {
-        $this->view->render($this->content, $this ->template);
+        $this->view->render($this->contentNewAuthor, $this ->template);
     }
+
     public function action_add()
     {
-        if(Request::isPost()){
-            $data = [
-                'authorName' => Request::post('name'),
-                'authorNameError' => ''
-            ];
-            $data['Errors'] = $this->checker->validateAuthor($data, true);
-            if(!empty($data['Errors']['authorNameError'])){
-                $data['authorName'] = '';
-                $this->view->render($this->content, $this ->template, $data);
-            }
-            elseif(empty($data['Errors']['authorNameError'])){
-                $author = $this->author::create($data['authorName']);
+        if(Request::isPost()) {
+
+            $form = new FormAddAuthor();
+            $form->load(Request::post());
+            try {
+                $this->checker->validateAuthorAdd($form->authorName, true);
+                $author = Author::create($form->authorName);
                 $this->repository->save($author);
-                $this->view->render($this->content, $this ->template, $data);
+            } catch (\Exception $exception) {
+                $error = $exception->getMessage();
             }
+            $this->view->render($this->contentNewAuthor, $this ->template, null, $form, $error);
         }
-    }
+
+        }
+
     public function action_addAnother()
     {
-        $data['action'] = 'addAnother';
-        $data['book_id'] = Request::get('book');
-        $this->view->render($this->content, $this ->template, $data);
+        $bookId =  Request::get('book');
+        echo $bookId;
+        $this->view->render($this->content, $this ->template, $bookId);
     }
+
     public function action_addRel()
     {
         if(Request::isPost()){
-            $data = [
-                'authorName' => Request::post('name'),
-                'bookId' => Request::post('book_id')
-            ];
-            $this->repository->getId($this->author);
-            $data['authorId'] = $this->author->getId();
-            $data['Errors'] = $this->checker->validateAuthor($data, false, true);
-            if(!empty($data['Errors']['authorNameError'])){
-                $data['authorName'] = '';
-                $this->view->render($this->content, $this ->template, $data);
+
+            $form = new FormAddAuthor();
+            $form->load(Request::post());
+            $bookId = Request::post('book_id');
+            try {
+                $this->checker->validateAuthorAdd($form->authorName, false, true);
+                $author = Author::create($form->authorName);
+                $this->repository->getId($author);
+                $this->repository->addRel($author, $bookId);
+            } catch (\Exception $exception) {
+                $error = $exception->getMessage();
             }
-            elseif(empty($data['Errors']['authorNameError'])){
-                $this->repository->addRel($data['authorId']['id'], $data['bookId']);
-                $data['action'] = 'addAnother';
-                $this->view->render($this->content, $this ->template, $data);
-            }
+            $this->view->render($this->content, $this ->template, null, $form, $error);
         }
     }
 }

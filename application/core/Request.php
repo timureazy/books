@@ -46,4 +46,9 @@ class Request {
         }
     }
 
+    public static function setPost ($name, $value)
+    {
+        $_POST["$name"] = $value;
+    }
+
 }

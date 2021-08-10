@@ -2,8 +2,9 @@
 namespace Core;
     class View
     {
-        function render($content_view, $template_view, $data = null)
+        public function render($content_view, $template_view, $data = null, $form = null, $error = null)
         {
             include 'application/views/'.$template_view;
         }
+
     }
